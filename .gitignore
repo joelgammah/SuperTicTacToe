@@ -113,3 +113,10 @@ frontend/build/
 # If you use pyenv/direnv locally
 .python-version
 .direnv/
+
+# -------------------------
+# GitHub-specific
+# Ignore GitHub configuration files
+# (these should not be committed to the repository)
+# -------------------------
+.github/
