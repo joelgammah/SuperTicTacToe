@@ -10,7 +10,7 @@ type Props = {
 // ----- Backend DTOs -----
 type GameStateDTO = {
   id: string;
-  board: Cell[];
+  boards: Cell[][];
   current_player: Player;
   winner: Player | null;
   is_draw: boolean;
@@ -67,12 +67,12 @@ export default function TicTacToe({ onWin }: Props) {
     return r.json();
   }
 
-  async function playMove(index: number): Promise<GameStateDTO> {
+  async function playMove(boardIndex: number, cellIndex: number): Promise<GameStateDTO> {
     if (!state) throw new Error("No game");
     const r = await fetch(`${API_BASE}/tictactoe/${state.id}/move`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ index }),
+      body: JSON.stringify({ board_index: boardIndex, cell_index: cellIndex }),
     });
     if (!r.ok) {
       const detail = await r.json().catch(() => ({}));
@@ -81,15 +81,16 @@ export default function TicTacToe({ onWin }: Props) {
     return r.json();
   }
 
-  async function handleClick(i: number) {
+  async function handleClick(boardIndex: number, cellIndex: number) {
     if (!state || loading) return;
-    // Light client-side guard to avoid noisy 400s:
-    if (state.winner || state.is_draw || state.board[i] !== null) return;
+
+    const board = state.boards[boardIndex];
+    if (state.winner || state.is_draw || board[cellIndex] !== null) return;
 
     setLoading(true);
     setError(null);
     try {
-      const next = await playMove(i);
+      const next = await playMove(boardIndex, cellIndex);
       setState(next);
     } catch (e: any) {
       setError(e?.message ?? "Move failed");
@@ -130,22 +131,30 @@ export default function TicTacToe({ onWin }: Props) {
     );
   }
 
-  const { board, status } = state;
+  const { boards, status } = state;
 
   return (
     <div className="max-w-sm mx-auto p-4">
       <div className="text-center mb-2 text-xl font-semibold">{status}</div>
-      <div className="grid grid-cols-3 gap-2">
-        {board.map((c, i) => (
-          <button
-            key={i}
-            className="aspect-square rounded-2xl border text-3xl font-bold flex items-center justify-center disabled:opacity-50"
-            onClick={() => handleClick(i)}
-            aria-label={`cell-${i}`}
-            disabled={loading || c !== null || state.winner !== null || state.is_draw}
-          >
-            {c}
-          </button>
+      <div className="grid grid-cols-3 gap-4">
+        {state.boards.map((board, boardIndex) => (
+          <div key={boardIndex} className="grid grid-cols-3 gap-1 border p-1">
+            {board.map((c, cellIndex) => (
+              <button
+                key={cellIndex}
+                className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-50"
+                onClick={() => handleClick(boardIndex, cellIndex)}
+                disabled={
+                  loading ||
+                  c !== null ||
+                  state.winner !== null ||
+                  state.is_draw
+                }
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         ))}
       </div>
       <div className="text-center mt-3">

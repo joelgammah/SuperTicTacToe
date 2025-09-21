@@ -16,7 +16,7 @@ dependencies = [
   "passlib[bcrypt]",
   "structlog",
   "redis",
-  "pydantic[email]", 
+  "pydantic[email]",
 ]
 
 [project.optional-dependencies]

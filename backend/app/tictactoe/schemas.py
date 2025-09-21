@@ -1,19 +1,29 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field, conint
-from typing import Optional, List, Literal
+
+from typing import Literal
+
+from pydantic import BaseModel, Field  # pyright: ignore[reportMissingImports]
 
 Player = Literal["X", "O"]
 
+
 class GameCreate(BaseModel):
-    starting_player: Optional[Player] = Field(default="X")
+    starting_player: Player | None = Field(default="X")
+
 
 class GameStateDTO(BaseModel):
     id: str
-    board: List[Optional[Player]]
+    boards: list[list[Player | None]]  # 9 sub-boards, each 9 cells
     current_player: Player
-    winner: Optional[Player]
+    winner: Player | None
     is_draw: bool
     status: str
 
+
+# BoardIndex = conint(ge=0, le=8)
+# CellIndex = conint(ge=0, le=8)
+
+
 class MoveRequest(BaseModel):
-    index: int
+    board_index: int
+    cell_index: int
