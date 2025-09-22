@@ -11,6 +11,7 @@ type Props = {
 type GameStateDTO = {
   id: string;
   boards: Cell[][];
+  mini_winners: (Player | null)[];
   current_player: Player;
   winner: Player | null;
   is_draw: boolean;
@@ -137,25 +138,34 @@ export default function TicTacToe({ onWin }: Props) {
     <div className="max-w-sm mx-auto p-4">
       <div className="text-center mb-2 text-xl font-semibold">{status}</div>
       <div className="grid grid-cols-3 gap-4">
-        {state.boards.map((board, boardIndex) => (
-          <div key={boardIndex} className="grid grid-cols-3 gap-1 border p-1">
-            {board.map((c, cellIndex) => (
-              <button
-                key={cellIndex}
-                className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-50"
-                onClick={() => handleClick(boardIndex, cellIndex)}
-                disabled={
-                  loading ||
-                  c !== null ||
-                  state.winner !== null ||
-                  state.is_draw
-                }
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        ))}
+        {state.boards.map((board, boardIndex) => {
+          const miniWinner = state.mini_winners[boardIndex];
+          return (
+            <div key={boardIndex} className="relative grid grid-cols-3 gap-1 border p-1">
+              {board.map((c, cellIndex) => (
+                <button
+                  key={cellIndex}
+                  className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-50"
+                  onClick={() => handleClick(boardIndex, cellIndex)}
+                  disabled={
+                    loading ||
+                    c !== null ||
+                    state.winner !== null ||
+                    state.is_draw ||
+                    miniWinner !== null
+                  }
+                >
+                  {c}
+                </button>
+              ))}
+              {miniWinner && (
+                <div className="absolute inset-0 bg-gray-200/80 flex items-center justify-center text-5xl font-bold">
+                  {miniWinner}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
       <div className="text-center mt-3">
         <button className="rounded-2xl px-4 py-2 border" onClick={reset} disabled={loading}>
