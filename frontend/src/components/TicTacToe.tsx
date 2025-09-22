@@ -136,9 +136,8 @@ export default function TicTacToe({ onWin }: Props) {
   const { boards, status } = state;
 
   return (
-    <div className="max-w-sm mx-auto p-4">
-      <div className="text-center mb-2 text-xl font-semibold">{status}</div>
-      {/* New helper message */}
+    <div className="max-w-xl mx-auto p-10">
+      <div className={`text-center mb-2 text-xl font-semibold ${state.current_player === "X" ? "text-red-500" : "text-yellow-500"}`}>{status}</div>
       {state.active_board !== null && (
         <div className="text-center mb-4 text-blue-600 font-medium">
           You must play in board {state.active_board + 1}
@@ -152,13 +151,13 @@ export default function TicTacToe({ onWin }: Props) {
             <div
               key={boardIndex}
               className={`relative grid grid-cols-3 gap-1 border p-1 rounded-lg ${
-                isActive ? "ring-4 ring-blue-400" : "opacity-50"
+                isActive ? "ring-4 ring-blue-400" : "opacity-100"
               }`}
             >
               {board.map((c, cellIndex) => (
                 <button
                   key={cellIndex}
-                  className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-50"
+                  className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-90"
                   onClick={() => handleClick(boardIndex, cellIndex)}
                   disabled={
                     loading ||
@@ -166,14 +165,16 @@ export default function TicTacToe({ onWin }: Props) {
                     state.winner !== null ||
                     state.is_draw ||
                     miniWinner !== null ||
-                    !isActive // prevent clicks outside active board
+                    !isActive
                   }
                 >
+                  <span className={c === "X" ? "text-red-500" : c === "O" ? "text-yellow-500" : ""}>
                   {c}
+                  </span>
                 </button>
               ))}
               {miniWinner && (
-                <div className="absolute inset-0 bg-gray-200/80 flex items-center justify-center text-5xl font-bold">
+                <div className="absolute inset-0 bg-green-200/80 flex items-center justify-center text-5xl font-bold">
                   {miniWinner}
                 </div>
               )}
