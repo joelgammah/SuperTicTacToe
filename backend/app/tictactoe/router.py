@@ -18,6 +18,7 @@ def _to_dto(game_id: str, gs: GameState) -> GameStateDTO:
         id=game_id,
         boards=gs.boards,
         mini_winners=gs.mini_winners,
+        active_board=gs.active_board,
         current_player=gs.current_player,
         winner=gs.winner,
         is_draw=gs.is_draw,

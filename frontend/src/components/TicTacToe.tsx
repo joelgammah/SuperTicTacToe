@@ -12,6 +12,7 @@ type GameStateDTO = {
   id: string;
   boards: Cell[][];
   mini_winners: (Player | null)[];
+  active_board: number | null;
   current_player: Player;
   winner: Player | null;
   is_draw: boolean;
@@ -137,11 +138,23 @@ export default function TicTacToe({ onWin }: Props) {
   return (
     <div className="max-w-sm mx-auto p-4">
       <div className="text-center mb-2 text-xl font-semibold">{status}</div>
+      {/* New helper message */}
+      {state.active_board !== null && (
+        <div className="text-center mb-4 text-blue-600 font-medium">
+          You must play in board {state.active_board + 1}
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-4">
         {state.boards.map((board, boardIndex) => {
           const miniWinner = state.mini_winners[boardIndex];
+          const isActive = state.active_board === null || state.active_board === boardIndex;
           return (
-            <div key={boardIndex} className="relative grid grid-cols-3 gap-1 border p-1">
+            <div
+              key={boardIndex}
+              className={`relative grid grid-cols-3 gap-1 border p-1 rounded-lg ${
+                isActive ? "ring-4 ring-blue-400" : "opacity-50"
+              }`}
+            >
               {board.map((c, cellIndex) => (
                 <button
                   key={cellIndex}
@@ -152,7 +165,8 @@ export default function TicTacToe({ onWin }: Props) {
                     c !== null ||
                     state.winner !== null ||
                     state.is_draw ||
-                    miniWinner !== null
+                    miniWinner !== null ||
+                    !isActive // prevent clicks outside active board
                   }
                 >
                   {c}

@@ -15,6 +15,7 @@ class GameStateDTO(BaseModel):
     id: str
     boards: list[list[Player | None]]  # 9 sub-boards, each 9 cells
     mini_winners: list[Player | None]
+    active_board: int | None
     current_player: Player
     winner: Player | None
     is_draw: bool
