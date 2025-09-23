@@ -158,6 +158,7 @@ export default function TicTacToe({ onWin }: Props) {
                 <button
                   key={cellIndex}
                   className="aspect-square rounded-2xl border text-xl font-bold flex items-center justify-center disabled:opacity-90"
+                  aria-label={`cell-${boardIndex}-${cellIndex}`}
                   onClick={() => handleClick(boardIndex, cellIndex)}
                   disabled={
                     loading ||
